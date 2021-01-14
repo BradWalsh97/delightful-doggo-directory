@@ -1,0 +1,2 @@
+FLASK_APP=digital-doggo-directory
+FLASK_ENV=development

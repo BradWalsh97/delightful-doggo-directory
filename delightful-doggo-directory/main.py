@@ -10,7 +10,7 @@ from .doggoVision import checkIfIsDog
 main = Blueprint("main", __name__)
 
 # todo: add to env vars
-UPLOAD_FOLDER = os.getcwd() + "/doggoDump"
+UPLOAD_FOLDER = os.getcwd() + "/delightful-doggo-directory/daDoggoDirectory"
 ALLOWED_EXTENSIONS = ["PNG", "JPG", "JPEG", "GIF"]
 
 
@@ -21,6 +21,7 @@ def index():
 
 @main.route("/newdog/", methods=["GET", "POST"])
 def upload():
+    print("Current dir: " + os.getcwd())
 
     # if its a post, and then if the request contains a file -> get the image
     if request.method == "POST":

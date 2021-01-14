@@ -4,7 +4,7 @@ from .extensions import mongo
 from .main import main
 
 
-def create_app(config_object="digital-doggo-directory.settings"):
+def create_app(config_object="delightful-doggo-directory.settings"):
     app = Flask(__name__)
 
     app.config.from_object(config_object)

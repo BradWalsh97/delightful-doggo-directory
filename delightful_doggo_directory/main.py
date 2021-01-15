@@ -14,7 +14,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 load_dotenv()
 
 # Create some often used vars
-UPLOAD_FOLDER = os.getcwd() + "/delightful-doggo-directory/daDoggoDirectory"
+UPLOAD_FOLDER = os.getcwd() + "/delightful_doggo_directory/daDoggoDirectory"
 ALLOWED_EXTENSIONS = ["PNG", "JPG", "JPEG", "GIF"]
 
 # connect to the database

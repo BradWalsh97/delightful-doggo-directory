@@ -4,7 +4,7 @@ from flask import Flask
 from .main import main
 
 
-def create_app(config_object="delightful-doggo-directory.settings"):
+def create_app(config_object="delightful_doggo_directory.settings"):
     app = Flask(__name__)
 
     app.config.from_object(config_object)

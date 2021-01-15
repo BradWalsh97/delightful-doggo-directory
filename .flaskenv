@@ -1,2 +1,2 @@
-FLASK_APP=delightful-doggo-directory
+FLASK_APP=delightful_doggo_directory
 FLASK_ENV=development

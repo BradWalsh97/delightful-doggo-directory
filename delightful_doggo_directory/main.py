@@ -1,24 +1,22 @@
-import os
-import json
+import os, json, random
 from flask import Blueprint, request, send_file
 from dotenv import load_dotenv, find_dotenv
 from bson import json_util
 from werkzeug.utils import secure_filename
 from delightful_doggo_directory.doggoVision import checkIfIsDog
 from delightful_doggo_directory.dbTools import User
-from mongoengine import *
+import mongoengine as mongo
 
-main = Blueprint("main", __name__)
+doggo = Blueprint("doggo", __name__)
+
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
-# load_dotenv(dotenv_path=os.path.join(BASEDIR, ".env"))
-load_dotenv()
 
 # Create some often used vars
-UPLOAD_FOLDER = os.getcwd() + "/delightful_doggo_directory/daDoggoDirectory"
+UPLOAD_FOLDER = os.getcwd() + "/resources/daDoggoDirectory"
 ALLOWED_EXTENSIONS = ["PNG", "JPG", "JPEG", "GIF"]
 
 # connect to the database
-connect(
+mongo.connect(
     db="Users",
     username=os.getenv("MONGO_USER"),
     password=os.getenv("MONGO_PASS"),
@@ -26,18 +24,18 @@ connect(
 )
 
 
-@main.route("/")
+@doggo.route("/")
 def index():
     return "<h1>Welcome to the Digital Doggo Directory! \n Home of the goodest boys/gorls</h1>"
 
 
-@main.route("/newdog/", methods=["GET", "POST"])
+@doggo.route("/doggo/", methods=["POST"])
 def upload():
     # if its a post, check to ensure user exists. If they do, process the file
     if request.method == "POST":
         # start by checking to see if the user exists
         try:
-            user = User.objects(username=request.args["username"]).get()
+            user = User.objects(username=request.form["username"]).get()
         except DoesNotExist:
             return "That user does not exist"
 
@@ -76,8 +74,13 @@ def upload():
 
     # if the user has uploaded a new doggo, then we increase their credits and compliment the doggo
     if isDog:
-        user.update_one(inc__credit_count=1)
-        return "Wow, thats a good doggo!"
+        user.update(inc__credit_count=1)
+        user.reload()
+        return (
+            "Wow, thats a good doggo! You now have "
+            + str(user.credit_count)
+            + " credits"
+        )
 
     else:
         # I don't like that I need to remove it after saving it but for the
@@ -99,20 +102,20 @@ def checkIfValidImageType(filename):
         return False
 
 
-@main.route("/search/<path:filename>", methods=["GET"])
-def findDoggo(filename):
+# def verifyFilename(image)
+
+
+@doggo.route("/doggo/", methods=["GET"])
+def findDoggo():
+    filename = request.args["filename"]
     # when a user searches, they will use one of their credits.
     # thus, first check to make sure the user exists and has credits
     try:
         user = User.objects(username=request.args["username"]).get()
-        print(user.credit_count)
     except DoesNotExist:
         return "That user does not exist"
-
     if user.credit_count == 0:
         return "You do not have enough credits to find a doggo."
-    print("credits: " + str(user.credit_count))
-    print(user.json())
 
     # before looking for the file, we want to secure the filename first, like we did with
     # the upload. The other's aren't needed since if the filename is empty or doesn't exist,
@@ -128,12 +131,25 @@ def findDoggo(filename):
         return "Unfortuntely that doggo has not yet been saved here."
 
 
-@main.route("/user/", methods=["POST"])
+@doggo.route("/doggo/random", methods=["GET"])
+def findRandomDoggo():
+    randomFile = random.choice(os.listdir("resources/daDoggoDirectory"))
+
+    try:
+        user = User.objects(username=request.args["username"]).get()
+    except DoesNotExist:
+        return "That user does not exist"
+
+    user.update(dec__credit_count=1)
+    return send_file("resources/daDoggoDirectory/" + randomFile)
+
+
+@doggo.route("/user/", methods=["POST"])
 def createUser():
     if request.method == "POST":
         # create the user and return any issues that might occur to the user
         try:
-            User(
+            User(  # change to request.data
                 username=request.args["username"],
                 email=request.args["email"],
                 password=request.args["password"],
@@ -145,7 +161,7 @@ def createUser():
     return "The new user as been added!"
 
 
-@main.route("/user/", methods=["GET"])
+@doggo.route("/user/", methods=["GET"])
 def getUser():
     try:
         user = User.objects(username=request.args["username"]).get()
@@ -154,7 +170,7 @@ def getUser():
         return "That user does not exist, please try again :)"
 
 
-@main.route("/user", methods=["DELETE"])
+@doggo.route("/user/", methods=["DELETE"])
 def deleteUser():
     if request.method == "DELETE":
         try:
@@ -169,3 +185,4 @@ def deleteUser():
 # delete user
 # buy more credits?
 # store what pictures are associated to that user?
+# optimize imports

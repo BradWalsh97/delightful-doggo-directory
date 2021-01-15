@@ -8,7 +8,7 @@ class User(Document):
     username = StringField(unique=True, requireed=True)
     email = EmailField(unique=True)
     password = StringField(required=True)
-    credit_count = IntField(default=0, min_value=0, max_value=None)
+    credit_count = IntField(default=0, max_value=None) #unable to set min_value due to current bug in mongoengine
     date_created = DateTimeField(default=datetime.utcnow)
 
     def json(self):

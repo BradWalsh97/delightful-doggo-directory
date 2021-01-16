@@ -17,10 +17,10 @@ ALLOWED_EXTENSIONS = ["PNG", "JPG", "JPEG", "GIF"]
 
 # connect to the database
 mongo.connect(
-    db="Users",
+    db=os.getenv("MONGO_DB_NAME"),
     username=os.getenv("MONGO_USER"),
     password=os.getenv("MONGO_PASS"),
-    host=os.getenv("MONGO_URI"),
+    host=os.getenv("MONexGO_URI"),
 )
 
 
@@ -151,10 +151,10 @@ def createUser():
         # create the user and return any issues that might occur to the user
         try:
             User(  # change to request.data
-                username=request.args["username"],
-                email=request.args["email"],
-                password=request.args["password"],
-                credit_count=request.args["credit_count"],
+                username=request.forms["username"],
+                email=request.forms["email"],
+                password=request.forms["password"],
+                credit_count=request.forms["credit_count"],
             ).save()
         except NotUniqueError:
             return "This user already exists! Please create a new one :)"

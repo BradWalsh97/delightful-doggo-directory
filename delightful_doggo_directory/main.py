@@ -1,17 +1,17 @@
-import os, json, random
-from flask import Blueprint, request, send_file
-from dotenv import load_dotenv, find_dotenv
-from bson import json_util
-from werkzeug.utils import secure_filename
-from delightful_doggo_directory.doggoVision import checkIfIsDog
-from delightful_doggo_directory.dbTools import User
+import os
+import random
+
 import mongoengine as mongo
+from flask import Blueprint, request, send_file
+from werkzeug.utils import secure_filename
+
+from delightful_doggo_directory.dbTools import User
+from delightful_doggo_directory.doggoVision import checkIfIsDog
 
 doggo = Blueprint("doggo", __name__)
 
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
-# Create some often used vars
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.getcwd() + "/resources/daDoggoDirectory"
 ALLOWED_EXTENSIONS = ["PNG", "JPG", "JPEG", "GIF"]
 

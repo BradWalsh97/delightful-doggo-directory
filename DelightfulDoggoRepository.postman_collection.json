@@ -1,0 +1,324 @@
+{
+	"info": {
+		"_postman_id": "528a6f5f-f7e3-47b7-a63b-5d1e70cadfd0",
+		"name": "Shopify Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Search for Doggo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/search/1.jpg?username=Brad",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"search",
+						"1.jpg"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "Brad"
+						}
+					]
+				},
+				"description": "This request will search for an image with the name 1.jpg and will search under the username Brad"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Image",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/home/brad/projects/shopify/dogPics/1.jpg"
+						},
+						{
+							"key": "username",
+							"value": "Brad",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/doggo/",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"doggo",
+						""
+					]
+				},
+				"description": "Uploads an image under a given username. \nSet details in body of request"
+			},
+			"response": []
+		},
+		{
+			"name": "Add new user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/user/?username=Brad&email=Brad@brad.com&password=password&credit_count=10",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						""
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "Brad"
+						},
+						{
+							"key": "email",
+							"value": "Brad@brad.com"
+						},
+						{
+							"key": "password",
+							"value": "password"
+						},
+						{
+							"key": "credit_count",
+							"value": "10"
+						}
+					]
+				},
+				"description": "Add a user with the provided details in the body."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/user/?username=Brad",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						""
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "Brad"
+						}
+					]
+				},
+				"description": "Delete the user provided in the params"
+			},
+			"response": []
+		},
+		{
+			"name": "Save new user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "Brad",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password123",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "brad@brad.com",
+							"type": "text"
+						},
+						{
+							"key": "credits",
+							"value": "10",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/user/",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						""
+					]
+				},
+				"description": "save a user with the prvided details in the body of the request"
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/user/?username=Brad",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						""
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "Brad"
+						}
+					]
+				},
+				"description": "Get a user's details. Username provided in params of request"
+			},
+			"response": []
+		},
+		{
+			"name": "Get a Random Doggo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/doggo/random?username=Brad",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"doggo",
+						"random"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "Brad"
+						}
+					]
+				},
+				"description": "Get a random dog. Username provided in params"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Credits",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "Brad",
+							"type": "text"
+						},
+						{
+							"key": "credits",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/user/credits",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"credits"
+					]
+				},
+				"description": "Add a sepcified amount of credits to a given user. Details provided in body of request"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Credits",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/user/credits?username=Brad",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"credits"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "Brad"
+						}
+					]
+				},
+				"description": "Get the amount of credits a specified user has. Username provided in params of request"
+			},
+			"response": []
+		}
+	]
+}

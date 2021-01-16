@@ -40,37 +40,14 @@ def upload():
             return "That user does not exist"
 
         if request.files:
-            # check that file has a name, is supported file type, and has a secure file name (no malicious code or whatever else)
-            image = request.files["image"]
-            # print(image) #uncomment for debugging
-
-            # check if file has a name
-            if image.filename == "":
-                print("Provided image has no name")
-                return "Please upload an image with a name!"
-            # check if filetype is supportedfilename
-            if not checkIfValidImageType(image.filename):
-                return "Please provide a valid file type."
-            # make sure no sneaky malicious code is in the filename (just use werkzeug)
-            else:
-                filename = secure_filename(image.filename)
-
-            # now that we have a secured file name, lets save the total path
-            filePath = os.path.join(UPLOAD_FOLDER, filename)
-
-            # check if file with that name already exists
-            if os.path.exists(filePath):
+            filePath = verifyFile(request.files["image"])
+            if filePath == "pic_already_exists":
                 return "A picture with that name already exists"
-
-            # if all checks are passed, save the image in the specified folder
-            image.save(filePath)
-
-            print("Image with name " + filename + " saved in" + UPLOAD_FOLDER)
         else:
             return "Please provide a file with your doggo request"
 
     # now that we've processes the image, we want to ensure that its actually a dog
-    isDog = checkIfIsDog(filePath, image)
+    isDog = checkIfIsDog(filePath, request.files["image"])
 
     # if the user has uploaded a new doggo, then we increase their credits and compliment the doggo
     if isDog:
@@ -102,7 +79,31 @@ def checkIfValidImageType(filename):
         return False
 
 
-# def verifyFilename(image)
+def verifyFile(image):
+    # check if file has a name
+    if image.filename == "":
+        print("Provided image has no name")
+        return "Please upload an image with a name!"
+    # check if filetype is supportedfilename
+    if not checkIfValidImageType(image.filename):
+        return "Please provide a valid file type."
+    # make sure no sneaky malicious code is in the filename (just use werkzeug)
+    else:
+        filename = secure_filename(image.filename)
+
+    # now that we have a secured file name, lets save the total path
+    filePath = os.path.join(UPLOAD_FOLDER, filename)
+
+    # check if file with that name already exists
+    if os.path.exists(filePath):
+        return "pic_already_exists"  # TODO: what is the best way to do this?
+
+    # if all checks are passed, save the image in the specified folder
+    image.save(filePath)
+
+    print("Image with name " + filename + " saved in" + UPLOAD_FOLDER)
+
+    return filePath
 
 
 @doggo.route("/doggo/", methods=["GET"])
@@ -176,13 +177,51 @@ def deleteUser():
         try:
             user = User.objects(username=request.args["username"]).get()
             user.delete()
+            return "Succesfully deleted " + request.args["username"]
         except DoesNotExist:
             return "That user does not exist, please try again :)"
 
 
-# todo: when a user adds a pic, increment credit
-# when user gets a pic, remove one credit
+@doggo.route("/user/credits", methods=["POST"])
+def addCredits():
+    try:
+        user = User.objects(username=request.form["username"]).get()
+    except DoesNotExist:
+        return "That user does not exist"
+
+    try:
+        newCredits = int(request.form["credits"])
+    except ValueError:
+        return "Please enter an number for the amount of credits"
+    if newCredits <= 0:
+        return "Please enter a value larger than 0 :)"
+    user.update(inc__credit_count=newCredits)
+    user.reload()
+
+    return (
+        str(newCredits)
+        + " credits have been added to your account. You now have "
+        + str(user.credit_count)
+    )
+
+
+@doggo.route("/user/credits", methods=["GET"])
+def getCredits():
+    try:
+        user = User.objects(username=request.args["username"]).get()
+    except DoesNotExist:
+        return "That user does not exist"
+
+    return user.username + " has " + str(user.credit_count) + " credits"
+
+
+# TODO: get credit count
+
+
+# TODO:
+# full test and documentation
 # delete user
 # buy more credits?
 # store what pictures are associated to that user?
 # optimize imports
+# verify arguments for doggoVision

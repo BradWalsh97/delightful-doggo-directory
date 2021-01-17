@@ -2,6 +2,14 @@
 # Delightful Doggo Directory
 Welcome to the Delightful Doggo Directory, my implementation of [Shopify's Developer Challenge 2021](https://docs.google.com/document/d/1ZKRywXQLZWOqVOHC4JkF3LqdpO3Llpfk_CkZPR8bjak/edit).
 
+
+[![Python version](https://img.shields.io/badge/Python-v3.8-green)](https://www.python.org/) [![Flask](https://img.shields.io/badge/Flask-v1.1.1-brightgreen)](https://flask.palletsprojects.com/en/1.1.x/) [![License](https://img.shields.io/pypi/l/ansicolortags.svg)](https://opensource.org/licenses/MIT)
+
+
+![No Maintenance Intended](http://unmaintained.tech/badge.svg)
+[![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://github.com/BradWalsh97)
+
+
 ## Introduction
 The __Delightful-Doggo-Directory__ (aka DDD) is a flask based project which acts as an image repository where users can upload, search, and delete pictures of dogs. Users can interact with DDD through its REST API. Every time a user uploads a photo, they are given a credit which allows them to then either search for a random or specific doggo. DDD ensures that only Doggos are uploaded via Google's Vision API. If DDD is not 90% sure that an uploaded picture is a dog, the image will be rejected. 
 

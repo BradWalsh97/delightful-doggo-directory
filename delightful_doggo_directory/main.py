@@ -193,6 +193,32 @@ def findDoggo():
         return "Unfortuntely that doggo has not yet been saved here."
 
 
+@doggo.route("/doggo/", methods=["DELETE"])
+def deleteDoggo():
+    """This method will be called if a DELETE request is made to the /doogo/ route.
+        It will attempt to delete a specified file (a doggo) :(
+
+    Parameters
+    ----------
+    filename
+        the name of the file the user wishes to delete
+
+    Returns
+    -------
+    String: either an error message or a success message
+        (Technically a success message, although its sad to see a delightful doggo leave the directory)
+    """
+
+    filename = secure_filename(request.args["filename"])
+    filePath = os.path.join(UPLOAD_FOLDER, filename)
+
+    if os.path.isfile(filePath):
+        os.remove(filePath)
+        return "The doggo has been removed, we're sad to see them go :("
+    else:
+        return "The doggo could not be found."
+
+
 @doggo.route("/doggo/random", methods=["GET"])
 def findRandomDoggo():
     """This method will be called if a GET request is made to the /doggo/random route
@@ -407,3 +433,5 @@ def getCredits():
 # make sure alll requests have the if.request == check
 # state that the username are case sensitive in documentation
 # add delete doggo
+# in documentation, say that doggos should be tied to users and that I'd like
+#   to make is so only a user who uploaded the pic can remove it, etc.

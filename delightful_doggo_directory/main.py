@@ -10,20 +10,20 @@ from delightful_doggo_directory.doggoVision import checkIfIsDog
 
 doggo = Blueprint("doggo", __name__)
 
-
+# Declare some often used constants
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.getcwd() + "/resources/daDoggoDirectory"
 ALLOWED_EXTENSIONS = ["PNG", "JPG", "JPEG", "GIF"]
 
-# connect to the database
+# Connec to MongoDB database
 mongo.connect(
     db=os.getenv("MONGO_DB_NAME"),
     username=os.getenv("MONGO_USER"),
     password=os.getenv("MONGO_PASS"),
-    host=os.getenv("MONexGO_URI"),
+    host=os.getenv("MONGO_URI"),
 )
 
-
+# Main route which just returns html
 @doggo.route("/")
 def index():
     return "<h1>Welcome to the Digital Doggo Directory! \n Home of the goodest boys/gorls</h1>"
@@ -31,9 +31,25 @@ def index():
 
 @doggo.route("/doggo/", methods=["POST"])
 def upload():
-    # if its a post, check to ensure user exists. If they do, process the file
+    """This method will be called when a POST request is made to the /doggo/ route.
+        It will attempt to save the provided image and credit the user who uploaded it
+
+    Parameters
+    ----------
+    image and username in the body of the request (as form-data)
+
+    Raises
+    ------
+    DoesNotExist
+        If no user with the provided username is found
+
+    Returns
+    -------
+        Returns a string that will either be an error message (dog already exists,
+        user not found, etc) or a message indicating the doggo was succesfully stored
+    """
+
     if request.method == "POST":
-        # start by checking to see if the user exists
         try:
             user = User.objects(username=request.form["username"]).get()
         except DoesNotExist:
@@ -43,6 +59,10 @@ def upload():
             filePath = verifyFile(request.files["image"])
             if filePath == "pic_already_exists":
                 return "A picture with that name already exists"
+            elif filePath == "pic_no_name":
+                return "Please upload an image with a name!"
+            elif filePath == "pic_invalid_type":
+                return "Please provide a valid file type."
         else:
             return "Please provide a file with your doggo request"
 
@@ -61,13 +81,25 @@ def upload():
 
     else:
         # I don't like that I need to remove it after saving it but for the
-        # moment it need to be done since the way GCP works I need to send it
+        # moment it needs to be done since the way GCP works I need to send it
         # the saved image. I'd like to find a better way to do this in the future
         os.remove(os.path.join(UPLOAD_FOLDER, filename))
         return "Hmmm, that ain't no doggo!"
 
 
 def checkIfValidImageType(filename):
+    """A function to check if the provided filename is valid
+
+    Parameters
+    ----------
+    filename:
+        the name of the file which we are trying to validate
+
+    Returns
+    -------
+        True: the filetype is supported/valud
+        False: the filetype is not supported or has no type
+    """
     if not "." in filename:
         return False
 
@@ -80,13 +112,22 @@ def checkIfValidImageType(filename):
 
 
 def verifyFile(image):
-    # check if file has a name
+    """This method verifies that the file is valid. If will make sure the image
+    has a name, has a valid file type, and will then sure the filename.
+
+    Parameters
+    ----------
+        image: The image to verifty
+
+    Returns
+    -------
+        String: either an error message or location where the file is saved
+    """
+
     if image.filename == "":
-        print("Provided image has no name")
-        return "Please upload an image with a name!"
-    # check if filetype is supportedfilename
+        return "pic_no_name"
     if not checkIfValidImageType(image.filename):
-        return "Please provide a valid file type."
+        return "pic_invalid_type"
     # make sure no sneaky malicious code is in the filename (just use werkzeug)
     else:
         filename = secure_filename(image.filename)
@@ -108,6 +149,28 @@ def verifyFile(image):
 
 @doggo.route("/doggo/", methods=["GET"])
 def findDoggo():
+    """This method will be called if a GET request is made to the /doggo/ route.
+        It will return the requested file and remove a credit from the user
+
+    Parameters
+    ----------
+    filename
+        the filename of the doggo the user is looking for, sent in body of request
+    username
+        the username of the user who will have a credit removed for the request,
+        sent in the body of the request
+
+    Raises
+    ------
+    DoesNotExist
+        Raised if the username provided does not exist in the database
+
+    Returns
+    -------
+    String: An error message
+    Picture: The requested image
+    """
+
     filename = request.args["filename"]
     # when a user searches, they will use one of their credits.
     # thus, first check to make sure the user exists and has credits
@@ -118,13 +181,11 @@ def findDoggo():
     if user.credit_count == 0:
         return "You do not have enough credits to find a doggo."
 
-    # before looking for the file, we want to secure the filename first, like we did with
-    # the upload. The other's aren't needed since if the filename is empty or doesn't exist,
-    # the os.path.isfile() will return false.
+    # secure filename before looking for it
     secureFilename = secure_filename(filename)
     filePath = os.path.join(UPLOAD_FOLDER, secureFilename)
 
-    # check to see if file exists, if it does send it to the user and decrement their credits. Otherwise say it doesn't exist
+    # check to see if file exists, if it does send it to the user and decrement their credits.
     if os.path.isfile(filePath):
         user.update(dec__credit_count=1)
         return send_file(filePath)
@@ -134,6 +195,28 @@ def findDoggo():
 
 @doggo.route("/doggo/random", methods=["GET"])
 def findRandomDoggo():
+    """This method will be called if a GET request is made to the /doggo/random route
+        It will return a random image and will remove one credit from the user
+
+    Parameters
+    ----------
+    username
+        the username of the user who will have a credit removed for the request,
+        sent in the body of the request
+
+    Raises
+    -----
+    DoesNotExist
+        Raised if the username prvided does not exist in the database
+
+    Returns
+    -------
+        String
+            Error message, if one occurs
+        Image
+            A random image if no errors occur
+    """
+
     randomFile = random.choice(os.listdir("resources/daDoggoDirectory"))
 
     try:
@@ -147,6 +230,30 @@ def findRandomDoggo():
 
 @doggo.route("/user/", methods=["POST"])
 def createUser():
+    """This metho is called when a POST request is made to the /user/ route.
+        It will attempt to create a new user in the database
+
+    Parameters
+    ----------
+    username
+        the username the new user is the be given
+    email
+        the email of the new user
+    password
+        the password of the new user
+    credit_count
+        the amount of credits the user is to have upon creation
+
+    Raises
+    ------
+    NotUniqueError
+        Raised if the provided username already exists
+
+    Returns
+    -------
+    String: Either an error message or a success message
+    """
+
     if request.method == "POST":
         # create the user and return any issues that might occur to the user
         try:
@@ -164,6 +271,24 @@ def createUser():
 
 @doggo.route("/user/", methods=["GET"])
 def getUser():
+    """This method will be called if a GET request is made to the /user/ route
+        It will get the details of a specified user
+
+    Parameters
+    ----------
+    username
+        the name of the user to get info about
+
+    Raises
+    ------
+    DoesNotExist
+        Raised if the username provided does not match a user in the database
+
+    Returns
+    -------
+    String: Either the json of the user, or an error message saying the user doesn't exists
+    """
+
     try:
         user = User.objects(username=request.args["username"]).get()
         return str(user.json())
@@ -173,6 +298,20 @@ def getUser():
 
 @doggo.route("/user/", methods=["DELETE"])
 def deleteUser():
+    """This method will be called if a DELETE request is made to the /user/ route.
+        It will attempt to delete the user of the provided username
+
+    Parameters
+    ----------
+    username
+        the username of the user to be deleted
+
+    Raises
+    ------
+    DoesNotExist
+        Raised if the provided username does not match an entry in the database
+    """
+
     if request.method == "DELETE":
         try:
             user = User.objects(username=request.args["username"]).get()
@@ -184,6 +323,29 @@ def deleteUser():
 
 @doggo.route("/user/credits", methods=["POST"])
 def addCredits():
+    """This method will be called if a POST request is made to the /user/credits route
+        It will add the provided amount of credits to the speicified user
+
+    Parameters
+    ----------
+    username
+        the name of the user who is to have the credits added to
+    credits
+        the amount of credits to be added
+
+    Raises
+    ------
+    DoesNotExist
+        Raised of the username does not match a user in the database
+    ValueError
+        Raised of the credits provided isn't an integer value
+
+    Returns
+    -------
+        String: Either an error message or how many credits have been added
+                to the account along with how many credits the user now has
+    """
+
     try:
         user = User.objects(username=request.form["username"]).get()
     except DoesNotExist:
@@ -207,6 +369,23 @@ def addCredits():
 
 @doggo.route("/user/credits", methods=["GET"])
 def getCredits():
+    """This method is called when a GET request is made to the /user/credits route.
+        It will return the amount of credits a specified user has
+
+    Parameters
+    ----------
+        username
+            the name of the user whos credits are to be returned
+
+    Raises
+    ------
+        DoesNotExist
+            Raised if the username does not correspond to a user in the database
+
+    Returns:
+        String: Either an error message or the amount of credits the specified user has
+    """
+
     try:
         user = User.objects(username=request.args["username"]).get()
     except DoesNotExist:
@@ -225,3 +404,6 @@ def getCredits():
 # store what pictures are associated to that user?
 # optimize imports
 # verify arguments for doggoVision
+# make sure alll requests have the if.request == check
+# state that the username are case sensitive in documentation
+# add delete doggo

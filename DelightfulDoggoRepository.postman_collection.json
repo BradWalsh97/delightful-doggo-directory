@@ -7,11 +7,23 @@
 	"item": [
 		{
 			"name": "Search for Doggo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "127.0.0.1:5000/search/1.jpg?username=Brad",
+					"raw": "127.0.0.1:5000/doggo/1.jpg?username=Brad&filename=1.jpg",
 					"host": [
 						"127",
 						"0",
@@ -20,13 +32,17 @@
 					],
 					"port": "5000",
 					"path": [
-						"search",
+						"doggo",
 						"1.jpg"
 					],
 					"query": [
 						{
 							"key": "username",
 							"value": "Brad"
+						},
+						{
+							"key": "filename",
+							"value": "1.jpg"
 						}
 					]
 				},
@@ -317,6 +333,35 @@
 					]
 				},
 				"description": "Get the amount of credits a specified user has. Username provided in params of request"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Doggo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:5000/doggo/?filename=1.jpg",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"doggo",
+						""
+					],
+					"query": [
+						{
+							"key": "filename",
+							"value": "1.jpg"
+						}
+					]
+				},
+				"description": "Deletes the specified file. Filename is a string sent in the params of the request"
 			},
 			"response": []
 		}

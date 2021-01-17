@@ -26,64 +26,64 @@ GOOGLE_APPLICATION_CREDENTIALS=<path and filename of JSON file containing creden
 A premade Postman is included in the root of the project directory to simplify the DDD experience. It can be imported and the respective parameters can be tweaked for your liking. 
 
 ### /doggo/
-   * `POST`: A post request to this route is to upload a document. The data must be contained in the body and passed as `form-data`
-     * Request:
-       * image: any supported file type,
-       * username: string
-     * Response:
-       * String: Either an image acceptance message, rejection messiage, or an error message
-   * `GET`: The get request is sent to this route to get a specified image. The data must be sent as querry parameters. 
-     * Request:
-       * filename: string of the name of the file you want
-       * username: string of the user who will use a credit for the request
-     * Response: (one of the two)
-       * image: The requested image
-       * string: An error message
-   * `DELETE`: A delete request is sent to delete a specific photo from the Doggo Directory. The requested data must be sent as a querry parameter
-     * Request:
-       * filename: string of the filename to be deleted
-     * Response:
-       * string: either an error message or confirmation of deletion
-  
-  ### /doggo/random
-  * `GET`: A get request at this route will return a random image of a doggo and remove one credit from the specified user. The requested data must be sent as querry parameters.
-    * Request:
+* `POST`: A post request to this route is to upload a document. The data must be contained in the body and passed as `form-data`
+  * Request:
+    * image: any supported file type,
       * username: string
     * Response:
-      * image
+      * String: Either an image acceptance message, rejection messiage, or an error message
+* `GET`: The get request is sent to this route to get a specified image. The data must be sent as querry parameters. 
+  * Request:
+    * filename: string of the name of the file you want
+    * username: string of the user who will use a credit for the request
+  * Response: (one of the two)
+    * image: The requested image
+  * string: An error message
+* `DELETE`: A delete request is sent to delete a specific photo from the Doggo Directory. The requested data must be sent as a querry parameter
+  * Request:
+    * filename: string of the filename to be deleted
+  * Response:
+    * string: either an error message or confirmation of deletion
   
-  ### /user/
-   * `POST`: Making a POST request to this route will create a new user. The request data must be sent in the body of the request as `form-data`. 
-     * Request:
-       * username: string
-       * email: string
-       * passwor: string
-       * credit_count: string
-     * Response:
-       * string: either error or success message
-   * `GET`: A GET request at this route is used to get details of the specified user. The request data is to be sent as querry parameters
-     * Request:
-       * username: string
-     * Response: 
-       * string: either an error message or the json of the user details
-   * `DELETE`: When a DELETE request is sent to this route, it will delete the specified user from the database. Data is to be passed in the querry params of the request. 
-     * Request:
-       * username: string
-     * Response:
-       * string: error or success message
+### /doggo/random
+* `GET`: A get request at this route will return a random image of a doggo and remove one credit from the specified user. The requested data must be sent as querry parameters.
+  * Request:
+    * username: string
+  * Response:
+    * image
+  
+### /user/
+* `POST`: Making a POST request to this route will create a new user. The request data must be sent in the body of the request as `form-data`. 
+  * Request:
+    * username: string
+      * email: string
+      * passwor: string
+      * credit_count: string
+    * Response:
+      * string: either error or success message
+* `GET`: A GET request at this route is used to get details of the specified user. The request data is to be sent as querry parameters
+  * Request:
+    * username: string
+  * Response: 
+    * string: either an error message or the json of the user details
+* `DELETE`: When a DELETE request is sent to this route, it will delete the specified user from the database. Data is to be passed in the querry params of the request. 
+  * Request:
+    * username: string
+  * Response:
+    * string: error or success message
 
-  ### /user/credits
-    * `POST`: A POST request is made to this route to add a specified amount of credits to the user's account. The requst data must be contained in the body of th request and be sent as `form-data`
-      * Request:
-        * username: string
-        * credits: int
-      * Response:
-        * string: either success or error message
-    * `GET`: A GET request on this route will return the amount of credits the specified user has. The data is to be passed as querry parameters. 
-      * Request:
-        * username, string
-      * Response:
-        * string: error message or the amount of credits the user has. 
+### /user/credits
+* `POST`: A POST request is made to this route to add a specified amount of credits to the user's account. The requst data must be contained in the body of th request and be sent as `form-data`
+  * Request:
+    * username: string
+    * credits: int
+  * Response:
+    * string: either success or error message
+* `GET`: A GET request on this route will return the amount of credits the specified user has. The data is to be passed as querry parameters. 
+  * Request:
+    * username, string
+  * Response:
+    * string: error message or the amount of credits the user has. 
 
 
 ## Future Improvements
